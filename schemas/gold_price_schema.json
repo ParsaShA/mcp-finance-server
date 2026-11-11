@@ -1,0 +1,9 @@
+{
+  "name": "get_gold_price",
+  "description": "دریافت قیمت جهانی هر انس طلا به دلار",
+  "input_schema": {
+    "type": "object",
+    "properties": {},
+    "required": []
+  }
+}

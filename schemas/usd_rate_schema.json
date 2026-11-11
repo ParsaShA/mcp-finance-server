@@ -1,0 +1,9 @@
+{
+  "name": "get_usd_rate",
+  "description": "دریافت نرخ دلار به تومان از Navasan",
+  "input_schema": {
+    "type": "object",
+    "properties": {},
+    "required": []
+  }
+}

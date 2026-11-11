@@ -1,0 +1,4 @@
+mcp>=1.28,<2
+pytse-client
+requests
+python-dotenv
