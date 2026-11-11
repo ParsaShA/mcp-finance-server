@@ -1,77 +1,50 @@
-پروژه سرور مالی مبتنی بر MCP
-معرفی پروژه
-این پروژه یک سرور مالی ساده است که با زبان پایتون و پروتکل Model
-Context Protocol (MCP) پیاده‌سازی شده است. هدف آن فراهم کردن چند ابزار
-برای دریافت اطلاعات مالی به‌روز و در اختیار قرار دادن آن‌ها به یک مدل هوش
-مصنوعی است.
+# 💹 MCP Finance Server
 
-برای نمونه، اگر کاربر بپرسد «قیمت تقریبی هر گرم طلای ۱۸ عیار در ایران
-چقدر است؟»، مدل باید قیمت جهانی طلا و نرخ دلار را از دو ابزار جداگانه
-دریافت کند و سپس با ترکیب این دو داده، قیمت تقریبی را محاسبه کند.
+## 🎯 Overview
 
-بنابراین هدف پروژه فقط دریافت اطلاعات نیست؛ بلکه نمایش نحوه استفاده
-ترکیبی از چند ابزار توسط یک مدل زبانی است.
-MCP چیست و چرا استفاده شده است؟
-MCP مخفف Model Context Protocol است. این پروتکل روشی استاندارد برای
-ارتباط مدل‌های هوش مصنوعی با ابزارها و منابع اطلاعاتی فراهم می‌کند.
+This project is a Python-based **MCP (Model Context Protocol) server** that provides financial data through three tools.
 
-در این پروژه، سرور MCP سه ابزار مالی را معرفی می‌کند. کلاینت سازگار با
-MCP می‌تواند ابزارهای موجود را شناسایی کند و در صورت نیاز آن‌ها را
-فراخوانی کند. منطق دریافت داده در توابع پایتون قرار دارد و MCP راه
-استاندارد ارائه این توابع به مدل را فراهم می‌کند.
-ابزارهای پروژه
-۱. دریافت اطلاعات نماد بورسی
-نام ابزار: get_stock_info
+It allows AI assistants to access stock market information, global gold prices, and USD exchange rates using a unified interface.
 
-این ابزار با استفاده از کتابخانه pytse-client اطلاعات یک نماد بورسی
-ایران را دریافت می‌کند.
+## 🔌 What is MCP?
 
-ورودی: - symbol: نماد سهم، برای مثال فولاد
+MCP (Model Context Protocol) is a standard that allows AI applications to communicate with external tools and data sources.
 
-خروجی: - نماد سهم و نام شرکت - آخرین قیمت معامله به تومان - درصد تغییر
-قیمت - حجم معاملات - ارزش بازار، در صورت موجود بودن - زمان آخرین
-به‌روزرسانی
+In this project, the MCP server connects an AI assistant to financial APIs and services, enabling it to retrieve and process real-time financial information.
 
-اگر نماد خالی یا نامعتبر باشد، تابع خطای مشخصی ایجاد می‌کند.
-۲. دریافت قیمت جهانی طلا
-نام ابزار: get_gold_price
+## 🛠️ Available Tools
 
-این ابزار قیمت جهانی هر انس طلا را از سرویس Gold API دریافت می‌کند.
+The server provides three main tools:
 
-خروجی شامل نماد طلا، قیمت هر انس به دلار، نام دارایی و زمان به‌روزرسانی
-(در صورت ارائه توسط سرویس) است.
-۳. دریافت نرخ دلار
-نام ابزار: get_usd_rate
+| Tool | Description | Data Source |
+|---|---|---|
+| `get_stock_info(symbol)` | Retrieves stock market information for Iranian companies | TSETMC |
+| `get_gold_price()` | Retrieves the global gold price per ounce in USD | Gold API |
+| `get_usd_rate()` | Retrieves the USD exchange rate in Iranian Toman | Navasan API |
 
-این ابزار نرخ دلار را از سرویس Navasan دریافت می‌کند. برای استفاده از آن
-باید کلید API معتبر در فایل .env قرار داده شود.
+## 📊 Example Scenario: Estimating the 18K Gold Price
 
-خروجی شامل نرخ دلار به تومان و زمان به‌روزرسانی (در صورت وجود) است.
-سناریوی اصلی: تخمین قیمت طلای ۱۸ عیار
-سناریوی اصلی برای نمایش همکاری چند ابزار این است:
+One of the main use cases of this project is estimating the price of one gram of 18-karat gold in Iran.
 
-کاربر می‌پرسد: «قیمت طلای داخلی الان تقریباً چقدر است؟»
+The AI assistant calls the gold price and USD exchange rate tools, then calculates the estimated price using the following formulas:
 
-مدل باید دو ابزار get_gold_price و get_usd_rate را فراخوانی کند. سپس
-محاسبات زیر را انجام دهد:
+**Step 1: Calculate the 24K gold price per gram**
 
-قیمت هر گرم طلای ۲۴ عیار:
+```python
+gold_24k = (gold_price_usd / 31.1) * usd_rate
+```
 
-(قیمت هر انس طلا / 31.1) × نرخ دلار
+**Step 2: Calculate the 18K gold price per gram**
 
-قیمت هر گرم طلای ۱۸ عیار:
+```python
+gold_18k = gold_24k * 0.75
+```
 
-قیمت هر گرم طلای ۲۴ عیار × 0.75
+If either API request fails, the assistant must report the error instead of calculating an estimated price.
 
-مدل باید قیمت انس و نرخ دلار دریافت‌شده را نیز در پاسخ نمایش دهد تا مبنای
-محاسبه روشن باشد.
+## 📁 Project Structure
 
-اگر یکی از دو ابزار خطا داد یا داده معتبر برنگرداند، محاسبه نباید انجام
-شود و مدل باید اعلام کند کدام داده در دسترس نبوده است.
-
-این محاسبه تخمینی است و اجرت ساخت، مالیات، سود فروشنده و اختلاف قیمت
-بازار داخلی را در نظر نمی‌گیرد.
-ساختار فایل‌های پروژه
+```text
 mcp_finance_server/
 │
 ├── server.py
@@ -91,56 +64,75 @@ mcp_finance_server/
     ├── stock_info_schema.json
     ├── gold_price_schema.json
     └── usd_rate_schema.json
-توضیح فایل‌ها:
-- server.py: ایجاد سرور MCP و معرفی سه ابزار.
-- tools/stock_info.py: تابع دریافت اطلاعات نماد بورسی.
-- tools/gold_price.py: تابع دریافت قیمت جهانی طلا.
-- tools/usd_rate.py: تابع دریافت نرخ دلار.
-- schemas/: فایل‌های JSON Schema برای مستندسازی ورودی ابزارها.
-- prompt_template.py: پرامپت سناریوی ترکیب ابزارها برای تخمین قیمت
-  طلا.
-- test_tools.py: اجرای مستقیم توابع برای بررسی اولیه.
-- requirements.txt: کتابخانه‌های مورد نیاز.
-- .env.example: نمونه فایل تنظیم کلید API.
-فناوری‌ها و سرویس‌های استفاده‌شده
-- Python: زبان اصلی پیاده‌سازی.
-- MCP Python SDK: ایجاد سرور و معرفی ابزارها.
-- pytse-client: دریافت اطلاعات نمادهای بورسی ایران.
-- Gold API: دریافت قیمت جهانی طلا.
-- Navasan API: دریافت نرخ دلار.
-- Requests: ارسال درخواست‌های HTTP.
-- python-dotenv: خواندن کلید API از فایل محیطی.
-نصب و اجرا
-ابتدا وارد پوشه پروژه شوید و محیط مجازی بسازید:
+```
+
+## ⚙️ Technologies
+
+- **Python** – Main programming language
+- **MCP** – Communication between AI assistants and external tools
+- **FastMCP** – Building and running the MCP server
+- **Requests** – Sending HTTP requests to external APIs
+- **pytse-client** – Retrieving Iranian stock market data
+- **python-dotenv** – Managing environment variables
+
+## 🚀 Installation and Setup
+
+**1. Clone the repository**
+
+```bash
+git clone https://github.com/USERNAME/MCP-Finance-Server.git
+cd MCP-Finance-Server
+```
+
+**2. Create a virtual environment**
+
+```bash
 python -m venv venv
-فعال‌سازی در ویندوز:
+```
+
+**3. Activate the virtual environment**
+
+Windows:
+
+```bash
 venv\Scripts\activate
-فعال‌سازی در Linux یا macOS:
+```
+
+Linux / macOS:
+
+```bash
 source venv/bin/activate
-نصب کتابخانه‌ها:
+```
+
+**4. Install dependencies**
+
+```bash
 pip install -r requirements.txt
-فایل .env.example را به .env تغییر نام دهید و کلید API دریافتی از
-Navasan را در آن قرار دهید:
-NAVASAN_API_KEY=YOUR_API_KEY
-برای اجرای آزمایشی توابع:
-python test_tools.py
-برای اجرای سرور MCP:
+```
+
+**5. Configure the API key**
+
+Create a `.env` file in the project root and add your Navasan API key:
+
+```env
+NAVASAN_API_KEY=your_api_key_here
+```
+
+**6. Run the MCP server**
+
+```bash
 python server.py
-سرور با روش ارتباطی stdio اجرا می‌شود و می‌تواند به یک کلاینت سازگار با
-MCP متصل شود. برای آزمایش ابزارها می‌توان از MCP Inspector نیز استفاده
-کرد.
-نکات و محدودیت‌ها
-1. برای دریافت نرخ دلار، کلید API معتبر Navasan لازم است.
-2. اجرای موفق به دسترسی اینترنت و در دسترس بودن سرویس‌های خارجی وابسته
-   است.
-3. داده‌های مالی ممکن است با تأخیر منتشر شوند؛ بنابراین زمان آخرین
-   به‌روزرسانی باید در تفسیر نتایج در نظر گرفته شود.
-4. واحد قیمت سهم و نرخ دلار در خروجی پروژه تومان در نظر گرفته شده است.
-   تبدیل ریال به تومان باید با توجه به ساختار واقعی پاسخ سرویس‌ها بررسی
-   شود.
-5. قیمت محاسبه‌شده طلا تخمینی است و الزاماً با قیمت معامله در بازار داخلی
-   برابر نیست.
-6. فایل‌های Schema برای مستندسازی ساختار ورودی ابزارها ارائه شده‌اند. در
-   خود سرور MCP، SDK ساختار ورودی ابزارها را از روی تعریف توابع و Type
-   Hintها ایجاد می‌کند.
-ارتباط با APIهای خارجی و ارائه ابزارها از طریق MCP است.
+```
+
+## ⚠️ Notes and Limitations
+
+- The USD exchange rate tool requires a valid Navasan API key.
+- The project depends on external APIs, so availability and response formats may change.
+- The estimated 18K gold price is a mathematical estimate based on the global gold price and USD exchange rate. It does not include local market premiums, taxes, or other trading costs.
+- Never upload your `.env` file or API keys to GitHub.
+
+## 📝 Conclusion
+
+This project demonstrates how MCP can connect AI assistants to external financial data sources.
+
+It provides a simple foundation for building AI-powered financial applications that can retrieve market data, combine information from multiple APIs, and perform basic financial calculations.
